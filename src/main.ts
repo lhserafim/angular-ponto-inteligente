@@ -4,6 +4,9 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
+// Para que algumas animações funcionem, como slider com evento de touch, precisamos importar o hammer
+import 'hammerjs';
+
 if (environment.production) {
   enableProdMode();
 }
