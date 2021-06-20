@@ -1,0 +1,104 @@
+1.  CRIANDO O PROJETO
+    1.1.    No terminal, digitar o comando para criar a aplicação: ng new ponto-inteligente
+        1.1.1.    Este comando irá instalar todos arquivos e dependências da aplicação
+2.  CONFIGURANDO O ANGULAR MATERIAL
+    2.1.    Acessar a raiz da aplicação e instalar todas as dependências necessárias
+        2.1.1.  npm instal --save @angular/material @angular/cdk @angular/animations hammerjs @angular/flex-layout
+    2.2.    Após as instações, fazer as configurações na aplicação.
+        2.2.1.  No arquivo app.module.ts, fazer as importações, como exemplo:
+        	    Ex.:
+                import { MatInputModule } from '@angular/material/input';
+		        import { MatButtonModule } from '@angular/material/button';
+                ...
+                imports: [
+                    MatInputModule,
+                    MatButtonModule
+                ]
+        DICA:   para saber quais importações utilizar, olhar no site do angular material qual é a API do elemento que estamos usando. Ex. button
+    2.3.    Para utilizar a biblioteca hammerjs, que permite animações como slide e touch, é ncessário fazer a importação no arquivo main.ts
+        2.3.1.  import 'hammerjs';
+    2.4.    Para aplicar o tema do material, abrir o arquivo styles.css e importar o tema desejado
+            Ex.: @import "@angular/material/prebuilt-themes/indigo-pink.css"
+    2.5.    No arquivo index.html, importar os ícones do material 
+            Ex: <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    2.6.    Por fim, PODE SER NECESSÁRIO atualizar o RXjs para ser compatível com o Angular 12. Na raiz da aplicação digitar: npm install rxjs-compat --save
+3.  CRIANDO O MÓDULO LOGIN
+    3.1.    Na raiz da aplicação, digitar: ng g module autenticacao/login
+    3.2.    Em seguida, importar o módulo em app.module.ts e adicionar aos imports
+            Ex.: 
+            import { LoginModule} from './autenticacao/login/login.module'; // importando o módulo criado (foi manualmente)
+            ...
+            imports: [
+                LoginModule
+            ]
+4.  CRIANDO O COMPONENTE LOGIN
+    4.1.    Na raiz da aplicação, digitar:  ng g c autenticacao/login/componets/login
+    DICA:   Evitar ter mais do que 4 ou 5 componentes dentro do mesmo diretório, se exceder este número criar subdiretórios ou deixar mais específico
+5.  CONFIGURANDO AS ROTAS. TRABALHANDO COM ROTAS MODULARIZADAS
+    5.1.    Cada módulo tem sua própria rota e as rotas são adicionadas a uma rota principal que é a rota da aplicação
+        5.1.1.  Precisamos ter um arquivo de rotas no nosso módulo principal da aplicação Ex.: app-routing.module.ts
+            5.1.1.1.    Na raiz da aplicação, digitar: ng g class app-routing.module
+            DICA:       O mesmo arquivo pode (e deve) ser gerado no momento da criação do projeto
+            5.1.1.2.    Adicionar a const routes um array com as rotas
+                        Ex.:
+                        export const routes: Routes = [
+                            { path: '', redirectTo: '/login', pathMatch: 'full' }
+                        ];
+            5.1.1.3.    Fazer a importação deste módulo em app.module.ts
+                        Ex.:
+                        import { AppRoutingModule } from './app-routing.module';
+                        ...
+                        imports: [
+                            BrowserModule,
+                            BrowserAnimationsModule,
+                            MatButtonModule,
+                            LoginModule,
+                            LoginRoutingModule,
+                            AppRoutingModule // IMPORTANTE! Para que as rotas funcionem corretamente o módulo raiz precisa ser o último na importação
+                        ],
+            5.1.1.4.    Para que o angular consiga fazer o roteamento entre os módulos e componentes é necessário adicionar a diretiva <router-outlet></router-outlet>
+                        no arquivo app.component.html
+        5.1.2.  Um arquivo de rotas para cada módulo criado. Ex.: login-routing.module.ts
+            5.1.2.1.    Na raiz da aplicação, digitar: ng g class autenticacao/login/login-routing.module
+            5.1.2.2.    Importar
+                        import { LoginComponent } from './components/login/login.component'
+                        import { LogarComponent } from './components/logar.component'
+            5.1.2.3.    Exportar as rotas deste módulo                        
+                        Ex.:
+                        export const LoginRoutes: Routes = [
+                            {
+                                path: 'login',
+                                component: LogarComponent, // Estou dizendo que LogarComponent tem filhos
+                                children: [{ path: '', component: LoginComponent }]
+                            }
+                        ];
+            5.1.2.4.    Precisamos indicar que este módulo é um filho do módulo de roteamento principal, por isso usamos o forChild
+                        Ex.:
+                        imports: [ RouterModule.forChild(LoginRoutes) ]
+            5.1.2.5.    Fazer a importação do LoginRoutingModule dentro de app.module.ts
+            IMPORTANTE! Fazer por ser um módulo filho do módulo principal, deve vir ANTES no array imports
+        5.1.3.  E também por boa prática um componente que será a "porta de entrada" para as nossas rotas em nossos módulos. Ex.: logar.component.ts
+            5.1.3.1.    Na raiz da aplicação, digitar: ng g class autenticacao/login/componets/logar.component
+            5.1.3.2.    Em login.module.ts, importar o RouterModule e os componentes LoginComponent e LogarComponent
+                        Ex.:
+                        import { RouterModule } from '@angular/router';
+                        import { LoginComponent } from './components/login/login.component';
+                        import { LogarComponent } from './components/logar.component';
+                        ...
+                        @NgModule({
+                            declarations: [
+                                LoginComponent,
+                                LogarComponent
+                            ],
+                            imports: [
+                                CommonModule,
+                                RouterModule
+                            ]
+                        })
+            5.1.3.3.    Acessar o componente logar.component e adicionar a diretiva <router-outlet></router-outlet>
+                        Ex.:
+                        @Component({
+                            template: `
+                                <router-outlet></router-outlet>
+                            `
+                        })

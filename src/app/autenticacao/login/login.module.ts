@@ -9,7 +9,6 @@ import { LoginComponent } from './components/login/login.component';
 import { LogarComponent } from './components/logar.component';
 
 
-
 @NgModule({
   declarations: [
     LoginComponent,
